@@ -1,9 +1,9 @@
 schema_version = "1.0.0"
 
-id = "blc_cockpit"
+id = "blendluxhelper"
 version = "0.1.0"
-name = "BlendLuxCore Cockpit"
-tagline = "An utility for BlendLuxCore providing features for development, debugging and test."
+name = "BlendLuxHelper"
+tagline = "A utility for BlendLuxCore to ease debugging and testing."
 maintainer = "Howetuft"
 type = "add-on"
 

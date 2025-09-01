@@ -11,10 +11,9 @@ from . import addon_preferences
 if _needs_reload:
     import importlib
     addon_preferences = importlib.reload(addon_preferences)
-    print("BLC-Cockpit - UI Reloaded")
 
 def register():
-    bpy.utils.register_class(addon_preferences.CockpitAddonPreferences)
+    bpy.utils.register_class(addon_preferences.HelperAddonPreferences)
 
 def unregister():
-    bpy.utils.unregister_class(addon_preferences.CockpitAddonPreferences)
+    bpy.utils.unregister_class(addon_preferences.HelperAddonPreferences)
