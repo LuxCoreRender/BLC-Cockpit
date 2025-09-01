@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2025 Authors (see AUTHORS file)
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+_needs_reload = "bpy" in locals()
+
+import bpy
+
+from . import addon_preferences
+
+if _needs_reload:
+    import importlib
+    addon_preferences = importlib.reload(addon_preferences)
+    print("BLC-Cockpit - UI Reloaded")
+
+def register():
+    bpy.utils.register_class(addon_preferences.CockpitAddonPreferences)
+
+def unregister():
+    bpy.utils.unregister_class(addon_preferences.CockpitAddonPreferences)
