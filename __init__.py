@@ -10,11 +10,14 @@ from . import ui
 
 if _needs_reload:
     import importlib
+
     ui = importlib.reload(ui)
     print(f"Reloading: {ui}")
 
+
 def register():
     ui.register()
+
 
 def unregister():
     ui.unregister()

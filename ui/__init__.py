@@ -10,10 +10,13 @@ from . import addon_preferences
 
 if _needs_reload:
     import importlib
+
     addon_preferences = importlib.reload(addon_preferences)
 
+
 def register():
-    bpy.utils.register_class(addon_preferences.HelperAddonPreferences)
+    bpy.utils.register_class(addon_preferences.LuxCoreHelperSettings)
+
 
 def unregister():
-    bpy.utils.unregister_class(addon_preferences.HelperAddonPreferences)
+    bpy.utils.unregister_class(addon_preferences.LuxCoreHelperSettings)

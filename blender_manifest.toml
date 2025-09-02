@@ -3,8 +3,8 @@ schema_version = "1.0.0"
 id = "blendluxhelper"
 version = "0.1.0"
 name = "BlendLuxHelper"
-tagline = "A utility for BlendLuxCore to ease debugging and testing."
-maintainer = "Howetuft"
+tagline = "A utility for BlendLuxCore debugging and testing"
+maintainer = "Howetuft, CodeFHD"
 type = "add-on"
 
 # # Optional: link to documentation, support, source files, etc
