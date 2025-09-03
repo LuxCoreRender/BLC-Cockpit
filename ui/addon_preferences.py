@@ -24,9 +24,9 @@ enum_sources = (
         "Get PyLuxCore from a local wheel file, not including dependencies",
     ),
     (
-        "LocalBundle",
+        "LocalFolder",
         "Local Wheel + dependencies",
-        "Get PyLuxCore from a local folder, bundling PyLuxCore wheel "
+        "Get PyLuxCore from a local folder, containing PyLuxCore wheel "
         "and all its dependencies",
     ),
 )
@@ -45,13 +45,20 @@ class LuxCoreHelperSettings(bpy.types.AddonPreferences):
     )
 
     path_to_wheel: bpy.props.StringProperty(
-        name="Path to Wheel file",
+        name="Path to File",
+        description="Path to PyLuxCore Wheel file",
         subtype="FILE_PATH",
     )
 
-    path_to_bundle: bpy.props.StringProperty(
-        name="Path to Folder containing Wheel + dependencies",
+    path_to_folder: bpy.props.StringProperty(
+        name="Path to Folder",
+        description="Path to Folder containing PyLuxCore Wheel + the other dependencies",
         subtype="DIR_PATH",
+    )
+
+    reinstall_upon_reloading: bpy.props.BoolProperty(
+        name="Reinstall upon reloading",
+        description="Reinstall every time BlendLuxCore is reloaded",
     )
 
     def draw(self, context):
@@ -65,15 +72,22 @@ class LuxCoreHelperSettings(bpy.types.AddonPreferences):
         if self.source == "PyPI":
             return
 
+        # From this point, we deal with local files
+
+        box = layout.box()
+
         if self.source == "LocalWheel":
             # File
-            row = layout.row()
+            row = box.row()
             row.prop(self, "path_to_wheel")
 
-        if self.source == "LocalBundle":
+        if self.source == "LocalFolder":
             # Folder
-            row = layout.row()
-            row.prop(self, "path_to_bundle")
+            row = box.row()
+            row.prop(self, "path_to_folder")
+
+        row = box.row()
+        row.prop(self, "reinstall_upon_reloading")
 
 
 classes = (LuxCoreHelperSettings,)
