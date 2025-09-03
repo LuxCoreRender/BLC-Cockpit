@@ -3,18 +3,21 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # Inspired by
-# https://github.com/blender/blender/blob/main/intern/cycles/blender/addon/properties.py
+# https://github.com/blender/blender/tree/main/scripts/addons_core/node_wrangler
+# https://github.com/blender/blender/tree/main/intern/cycles/blender/addon/properties.py
 
 _needs_reload = "bpy" in locals()
 
 import bpy
 
 from . import utils
+from . import operators
 
 if _needs_reload:
     import importlib
 
     utils = importlib.reload(utils)
+    operators = importlib.reload(operators)
 
 enum_sources = (
     ("PyPI", "PyPI", "Get PyLuxCore from Python Package Index (PyPI)"),
@@ -32,7 +35,7 @@ enum_sources = (
 )
 
 
-class LuxCoreHelperSettings(bpy.types.AddonPreferences):
+class BLH_Settings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
 
     bl_idname = utils.get_bl_idname()
@@ -89,15 +92,5 @@ class LuxCoreHelperSettings(bpy.types.AddonPreferences):
         row = box.row()
         row.prop(self, "reinstall_upon_reloading")
 
-
-classes = (LuxCoreHelperSettings,)
-
-
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-
-def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+        row = box.row()
+        row.operator(operators.BLH_InstallWheel.bl_idname, text="Reinstall wheel")
