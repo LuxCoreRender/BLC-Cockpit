@@ -9,7 +9,7 @@ _needs_reload = "bpy" in locals()
 
 import bpy
 
-from .. import utils
+from . import utils
 
 if _needs_reload:
     import importlib

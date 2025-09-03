@@ -6,18 +6,18 @@ _needs_reload = "bpy" in locals()
 
 import bpy
 
-from . import ui
+from . import blendluxhelper
 
 if _needs_reload:
     import importlib
 
-    ui = importlib.reload(ui)
-    print(f"Reloading: {ui}")
+    blendluxhelper = importlib.reload(blendluxhelper)
+    print(f"Reloading: {blendluxhelper}")
 
 
 def register():
-    ui.register()
+    blendluxhelper.register()
 
 
 def unregister():
-    ui.unregister()
+    blendluxhelper.unregister()
