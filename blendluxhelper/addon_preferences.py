@@ -8,18 +8,21 @@
 
 _needs_reload = "bpy" in locals()
 
+import json
+import os
+
 import bpy
 
 from . import utils
-from . import operators
 
 if _needs_reload:
     import importlib
 
     utils = importlib.reload(utils)
-    operators = importlib.reload(operators)
 
-enum_sources = (
+SPLIT_FACTOR = 1 / 3
+
+enum_wheel_sources = (
     ("PyPI", "PyPI", "Get PyLuxCore from Python Package Index (PyPI)"),
     (
         "LocalWheel",
@@ -34,16 +37,15 @@ enum_sources = (
     ),
 )
 
-
 class BLH_Settings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
 
     bl_idname = utils.get_bl_idname()
 
-    source: bpy.props.EnumProperty(
+    wheel_source: bpy.props.EnumProperty(
         name="Source",
         description="PyLuxCore source",
-        items=enum_sources,
+        items=enum_wheel_sources,
         default="PyPI",
     )
 
@@ -64,33 +66,53 @@ class BLH_Settings(bpy.types.AddonPreferences):
         description="Reinstall every time BlendLuxCore is reloaded",
     )
 
-    def draw(self, context):
+    def _draw_settings(self):
+        """Draw advanced settings panel."""
         layout = self.layout
-        layout.label(text="PyLuxCore source:")
 
+        row = layout.row()
+        row.label(
+            text=(
+                "WARNING! THE FOLLOWING SETTINGS MAY CAUSE BLENDLUXCORE "
+                "TO BECOME UNUSABLE. "
+                "*** DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING. ***"
+            )
+        )
         # Source selector
         row = layout.row()
-        row.prop(self, "source", expand=True)
+        split = row.split(factor=SPLIT_FACTOR, align=True)
+        split.label(text="Wheel source:")
+        row = split.row()
+        row.prop(self, "wheel_source", expand=True)
 
-        if self.source == "PyPI":
-            return
-
-        # From this point, we deal with local files
-
-        box = layout.box()
-
-        if self.source == "LocalWheel":
+        if self.wheel_source == "PyPI":
+            pass
+        elif self.wheel_source == "LocalWheel":
             # File
-            row = box.row()
-            row.prop(self, "path_to_wheel")
-
-        if self.source == "LocalFolder":
+            row = layout.row()
+            split = row.split(factor=SPLIT_FACTOR)
+            split.label(text="Path to File:")
+            split.prop(self, "path_to_wheel", text="")
+        elif self.wheel_source == "LocalFolder":
             # Folder
-            row = box.row()
-            row.prop(self, "path_to_folder")
+            row = layout.row()
+            split = row.split(factor=SPLIT_FACTOR)
+            split.label(text="Path to Folder:")
+            split.prop(self, "path_to_folder", text="")
+        else:
+            raise RuntimeError(f"Unhandled wheel source: {wheel_source}")
 
-        row = box.row()
-        row.prop(self, "reinstall_upon_reloading")
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Reloading")
+        split.prop(self, "reinstall_upon_reloading")
 
-        row = box.row()
-        row.operator(operators.BLH_InstallWheel.bl_idname, text="Reinstall wheel")
+    def draw(self, context):
+        self._draw_settings()
+
+# Register new operator
+def register():
+    bpy.utils.register_class(BLH_Settings)
+
+def unregister():
+    bpy.utils.unregister_class(BLH_Settings)
