@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import itertools
+import pathlib
 
+import bpy
 import addon_utils
 
 ADDON_NAME = "BlendLuxHelper"
@@ -26,6 +28,7 @@ def get_blc_module():
 
 def get_user_dir(name):
     """Get a user writeable directory, create it if not existing."""
+    # TODO Handle case when BlendLuxCore is not loaded
     return pathlib.Path(
-        bpy.utils.extension_path_user("blendluxcore", path=name, create=True)
+        bpy.utils.extension_path_user(get_blc_module().__name__, path=name, create=True)
     )

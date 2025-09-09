@@ -7,7 +7,6 @@ _needs_reload = "bpy" in locals()
 import bpy
 
 from . import addon_preferences
-from . import operators
 
 if _needs_reload:
     import importlib
@@ -16,10 +15,8 @@ if _needs_reload:
 
 
 def register():
-    bpy.utils.register_class(operators.BLH_InstallWheel)
-    bpy.utils.register_class(addon_preferences.BLH_Settings)
+    addon_preferences.register()
 
 
 def unregister():
-    bpy.utils.unregister_class(operators.BLH_InstallWheel)
-    bpy.utils.unregister_class(addon_preferences.BLH_Settings)
+    addon_preferences.unregister()
