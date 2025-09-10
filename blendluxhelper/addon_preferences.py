@@ -47,15 +47,16 @@ class BLHSettings(bpy.types.AddonPreferences):
         name="Source",
         description="PyLuxCore source",
         items=enum_wheel_sources,
-        # default="PyPI",
         get=get_set.get_wheel_source,
         set=get_set.set_wheel_source,
     )
 
     path_to_wheel: bpy.props.StringProperty(
-        name="Path to File",
+        name="Path to Wheel",
         description="Path to PyLuxCore Wheel file",
         subtype="FILE_PATH",
+        get=get_set.get_path_to_wheel,
+        set=get_set.set_path_to_wheel,
     )
 
     path_to_folder: bpy.props.StringProperty(
@@ -65,11 +66,15 @@ class BLHSettings(bpy.types.AddonPreferences):
             "dependencies"
         ),
         subtype="DIR_PATH",
+        get=get_set.get_path_to_folder,
+        set=get_set.set_path_to_folder,
     )
 
     reinstall_upon_reloading: bpy.props.BoolProperty(
         name="Reinstall upon reloading",
         description="Reinstall every time BlendLuxCore is reloaded",
+        get=get_set.get_reinstall_upon_reloading,
+        set=get_set.set_reinstall_upon_reloading,
     )
 
     settings_file: bpy.props.StringProperty(
@@ -121,7 +126,7 @@ class BLHSettings(bpy.types.AddonPreferences):
         # Settings file
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Settings file:")
+        split.label(text="Output file:")
         split.prop(self, "settings_file", text="")
 
 

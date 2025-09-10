@@ -22,10 +22,13 @@ if _needs_reload:
     utils = importlib.reload(utils)
 
 
-SETTINGS_FILE = utils.get_user_dir("settings") / "blc_settings.json"
+SETTINGS_FILENAME = "blc_settings.json"
+SETTINGS_SUBFOLDER = "settings"
 SETTINGS_INIT = {
     "wheel_source": 0,
-    "path": None,
+    "path_to_wheel": None,
+    "path_to_folder": None,
+    "reinstall_upon_reloading": False,
 }
 
 
@@ -34,15 +37,23 @@ def _get_settings():
 
     Create json file if it does not exist and (re)initialize it if needed.
     """
-    SETTINGS_FILE.touch(exist_ok=True)
+    settings_folder = utils.get_user_dir(SETTINGS_SUBFOLDER)
+    settings_file =  settings_folder / SETTINGS_FILENAME
+    settings_file.touch(exist_ok=True)
     try:
-        with open(SETTINGS_FILE, "r", encoding="utf-8") as fsettings:
+        with open(settings_file, "r", encoding="utf-8") as fsettings:
             return json.load(fsettings)
     except json.JSONDecodeError:
-        with open(SETTINGS_FILE, "w", encoding="utf-8") as fsettings:
+        with open(settings_file, "w", encoding="utf-8") as fsettings:
             # (Re)init settings file
             json.dump(SETTINGS_INIT, fsettings)
         return _get_settings()
+
+
+def _set_settings(settings):
+    """Write settings in json file."""
+    with open(SETTINGS_FILE, "w", encoding="utf-8") as fsettings:
+        json.dump(settings, fsettings)
 
 
 def get_settings_file_path(_):
@@ -60,5 +71,43 @@ def set_wheel_source(_, value):
     """Setter for wheel source preference."""
     settings = _get_settings()
     settings["wheel_source"] = value
-    with open(SETTINGS_FILE, "w", encoding="utf-8") as fsettings:
-        json.dump(settings, fsettings)
+    _set_settings(settings)
+
+
+def get_path_to_wheel(_):
+    """Getter for path to wheel preference."""
+    settings = _get_settings()
+    return settings["path_to_wheel"]
+
+
+def set_path_to_wheel(_, value):
+    """Setter for path to wheel preference."""
+    settings = _get_settings()
+    settings["path_to_wheel"] = value
+    _set_settings(settings)
+
+
+def get_path_to_folder(_):
+    """Getter for path to folder preference."""
+    settings = _get_settings()
+    return settings["path_to_folder"]
+
+
+def set_path_to_folder(_, value):
+    """Setter for path to folder preference."""
+    settings = _get_settings()
+    settings["path_to_folder"] = value
+    _set_settings(settings)
+
+
+def get_reinstall_upon_reloading(_):
+    """Getter for 'reinstall upon reloading' preference."""
+    settings = _get_settings()
+    return settings["reinstall_upon_reloading"]
+
+
+def set_reinstall_upon_reloading(_, value):
+    """Setter for 'reinstall upon reloading' preference."""
+    settings = _get_settings()
+    settings["reinstall_upon_reloading"] = value
+    _set_settings(settings)
