@@ -26,6 +26,7 @@ SETTINGS_FILENAME = "blc_settings.json"
 SETTINGS_SUBFOLDER = "settings"
 SETTINGS_INIT = {
     "wheel_source": 0,
+    "wheel_version": None,
     "path_to_wheel": None,
     "path_to_folder": None,
     "reinstall_upon_reloading": False,
@@ -90,6 +91,16 @@ def get_wheel_source(_):
 def set_wheel_source(_, value):
     """Setter for wheel source preference."""
     _set("wheel_source", value)
+
+
+def get_wheel_version(_):
+    """Getter for wheel version preference."""
+    return _get("wheel_version")
+
+
+def set_wheel_version(_, value):
+    """Setter for wheel version preference."""
+    _set("wheel_version", value)
 
 
 def get_path_to_wheel(_):

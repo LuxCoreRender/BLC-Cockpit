@@ -51,6 +51,13 @@ class BLHSettings(bpy.types.AddonPreferences):
         set=get_set.set_wheel_source,
     )
 
+    wheel_version: bpy.props.StringProperty(
+        name="Wheel version",
+        description="Wheel version, for PyPI",
+        get=get_set.get_wheel_version,
+        set=get_set.set_wheel_version,
+    )
+
     path_to_wheel: bpy.props.StringProperty(
         name="Path to Wheel",
         description="Path to PyLuxCore Wheel file",
@@ -102,7 +109,10 @@ class BLHSettings(bpy.types.AddonPreferences):
         row.prop(self, "wheel_source", expand=True)
 
         if self.wheel_source == "PyPI":
-            pass
+            row = layout.row()
+            split = row.split(factor=SPLIT_FACTOR)
+            split.label(text="Wheel Version (blank for default):")
+            split.prop(self, "wheel_version", text="")
         elif self.wheel_source == "LocalWheel":
             # File
             row = layout.row()
