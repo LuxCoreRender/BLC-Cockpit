@@ -79,7 +79,7 @@ class BLHSettings(bpy.types.AddonPreferences):
 
     settings_file: bpy.props.StringProperty(
         name="Settings file",
-        get=get_set.get_settings_file_path,
+        get=lambda _: str(get_set.get_settings_file_path()),
     )
 
     def draw(self, context):
