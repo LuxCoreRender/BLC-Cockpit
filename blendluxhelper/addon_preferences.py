@@ -120,13 +120,13 @@ class BLHSettings(bpy.types.AddonPreferences):
 
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Reloading")
+        split.label(text="Reloading:")
         split.prop(self, "reinstall_upon_reloading")
 
         # Settings file
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Output file:")
+        split.label(text="Output file (read-only):")
         split.prop(self, "settings_file", text="")
 
 
