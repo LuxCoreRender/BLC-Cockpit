@@ -35,9 +35,10 @@ def get_blc_module():
 
 def get_user_dir(name):
     """Get a user writeable directory, create it if not existing."""
-    # TODO Handle case when BlendLuxCore is not loaded
+    if not (blc_module := get_blc_module()):
+        return None
     return pathlib.Path(
         bpy.utils.extension_path_user(
-            get_blc_module().__name__, path=name, create=True
+            blc_module.__name__, path=name, create=True
         )
     )

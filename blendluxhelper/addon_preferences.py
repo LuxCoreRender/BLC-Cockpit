@@ -93,6 +93,11 @@ class BLHSettings(bpy.types.AddonPreferences):
         """Draw advanced settings panel (callback)."""
         layout = self.layout
 
+        if not utils.get_blc_module():
+            row = layout.row()
+            row.label(text="< BlendLuxCore not found >")
+            return
+
         row = layout.row()
         row.label(
             text=(
