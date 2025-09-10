@@ -2,6 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Getters and setters for settings.
+
+This module implements the synchronization between the addon preferences and
+the input file exported to BlendLuxCore.
+"""
+
 _needs_reload = "bpy" in locals()
 
 import json
@@ -45,11 +51,13 @@ def get_settings_file_path(_):
 
 
 def get_wheel_source(_):
+    """Getter for wheel source preference."""
     settings = _get_settings()
     return settings["wheel_source"]
 
 
 def set_wheel_source(_, value):
+    """Setter for wheel source preference."""
     settings = _get_settings()
     settings["wheel_source"] = value
     with open(SETTINGS_FILE, "w", encoding="utf-8") as fsettings:

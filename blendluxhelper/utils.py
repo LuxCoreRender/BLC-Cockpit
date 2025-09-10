@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Utilities for BlendLuxHelper."""
+
 import itertools
 import pathlib
 

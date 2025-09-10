@@ -2,6 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Helper for BlendLuxCore development and testing.
+
+This helper is a Blender addon, which provides ability to configure the way
+pyluxcore is loaded in BlendLuxCore.
+The configuration is exported to BlendLuxCore via a json file, placed in a user
+directory.
+"""
+
 _needs_reload = "bpy" in locals()
 
 import bpy

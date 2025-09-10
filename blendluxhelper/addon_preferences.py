@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""This module implements the preferences panel of the add-on."""
+
 _needs_reload = "bpy" in locals()
 
-import json
-import os
 
 import bpy
 
@@ -60,7 +60,10 @@ class BLH_Settings(bpy.types.AddonPreferences):
 
     path_to_folder: bpy.props.StringProperty(
         name="Path to Folder",
-        description="Path to Folder containing PyLuxCore Wheel + the other dependencies",
+        description=(
+            "Path to Folder containing PyLuxCore Wheel + the other "
+            "dependencies"
+        ),
         subtype="DIR_PATH",
     )
 
@@ -74,8 +77,8 @@ class BLH_Settings(bpy.types.AddonPreferences):
         get=get_set.get_settings_file_path,
     )
 
-    def _draw_settings(self):
-        """Draw advanced settings panel."""
+    def draw(self, context):
+        """Draw advanced settings panel (callback)."""
         layout = self.layout
 
         row = layout.row()
@@ -108,7 +111,7 @@ class BLH_Settings(bpy.types.AddonPreferences):
             split.label(text="Path to Folder:")
             split.prop(self, "path_to_folder", text="")
         else:
-            raise RuntimeError(f"Unhandled wheel source: {wheel_source}")
+            raise RuntimeError(f"Unhandled wheel source: {self.wheel_source}")
 
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
@@ -120,9 +123,6 @@ class BLH_Settings(bpy.types.AddonPreferences):
         split = row.split(factor=SPLIT_FACTOR)
         split.label(text="Settings file:")
         split.prop(self, "settings_file", text="")
-
-    def draw(self, context):
-        self._draw_settings()
 
 
 # Register new operator
