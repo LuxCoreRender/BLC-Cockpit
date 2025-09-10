@@ -10,25 +10,32 @@ import addon_utils
 
 ADDON_NAME = "BlendLuxHelper"
 
+
 def get_bl_idname():
     """Get bl_idname from __package__."""
-    components = __package__.split('.')
+    components = __package__.split(".")
     prefix = list(itertools.takewhile(lambda x: x != ADDON_NAME, components))
     prefix.append(ADDON_NAME)
-    return '.'.join(prefix)
+    return ".".join(prefix)
+
 
 def get_blc_module():
     """Get BlendLuxCore module."""
-    modules = (m for m in addon_utils.modules() if m.bl_info["name"] == "BlendLuxCore")
+    modules = (
+        m for m in addon_utils.modules() if m.bl_info["name"] == "BlendLuxCore"
+    )
     for module in modules:
         break
     else:
         module = None
     return module
 
+
 def get_user_dir(name):
     """Get a user writeable directory, create it if not existing."""
     # TODO Handle case when BlendLuxCore is not loaded
     return pathlib.Path(
-        bpy.utils.extension_path_user(get_blc_module().__name__, path=name, create=True)
+        bpy.utils.extension_path_user(
+            get_blc_module().__name__, path=name, create=True
+        )
     )

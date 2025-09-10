@@ -37,6 +37,7 @@ enum_wheel_sources = (
     ),
 )
 
+
 class BLH_Settings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
 
@@ -72,7 +73,6 @@ class BLH_Settings(bpy.types.AddonPreferences):
         name="Settings file",
         get=get_set.get_settings_file_path,
     )
-
 
     def _draw_settings(self):
         """Draw advanced settings panel."""
@@ -124,9 +124,11 @@ class BLH_Settings(bpy.types.AddonPreferences):
     def draw(self, context):
         self._draw_settings()
 
+
 # Register new operator
 def register():
     bpy.utils.register_class(BLH_Settings)
+
 
 def unregister():
     bpy.utils.unregister_class(BLH_Settings)

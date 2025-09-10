@@ -18,8 +18,8 @@ if _needs_reload:
 
 SETTINGS_FILE = utils.get_user_dir("settings") / "blc_settings.json"
 SETTINGS_INIT = {
-        "wheel_source": 0,
-        "path": None,
+    "wheel_source": 0,
+    "path": None,
 }
 
 
@@ -28,7 +28,7 @@ def _get_settings():
 
     Create json file if it does not exist and (re)initialize it if needed.
     """
-    SETTINGS_FILE.touch(exist_ok=True);
+    SETTINGS_FILE.touch(exist_ok=True)
     try:
         with open(SETTINGS_FILE, "r", encoding="utf-8") as fsettings:
             return json.load(fsettings)
@@ -38,15 +38,16 @@ def _get_settings():
             json.dump(SETTINGS_INIT, fsettings)
         return _get_settings()
 
+
 def get_settings_file_path(_):
     """Path to settings file."""
     return str(SETTINGS_FILE)
 
 
-
 def get_wheel_source(_):
     settings = _get_settings()
     return settings["wheel_source"]
+
 
 def set_wheel_source(_, value):
     settings = _get_settings()
