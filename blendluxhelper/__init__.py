@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Package initializer."""
+
 _needs_reload = "bpy" in locals()
 
 import bpy

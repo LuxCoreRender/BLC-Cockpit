@@ -38,7 +38,7 @@ enum_wheel_sources = (
 )
 
 
-class BLH_Settings(bpy.types.AddonPreferences):
+class BLHSettings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
 
     bl_idname = utils.get_bl_idname()
@@ -127,8 +127,8 @@ class BLH_Settings(bpy.types.AddonPreferences):
 
 # Register new operator
 def register():
-    bpy.utils.register_class(BLH_Settings)
+    bpy.utils.register_class(BLHSettings)
 
 
 def unregister():
-    bpy.utils.unregister_class(BLH_Settings)
+    bpy.utils.unregister_class(BLHSettings)
