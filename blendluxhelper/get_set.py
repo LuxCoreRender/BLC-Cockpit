@@ -11,6 +11,7 @@ the input file exported to BlendLuxCore.
 _needs_reload = "bpy" in locals()
 
 import json
+import pathlib
 
 import bpy
 
@@ -23,19 +24,20 @@ if _needs_reload:
 
 
 SETTINGS_FILENAME = "blc_settings.json"
-SETTINGS_SUBFOLDER = "settings"
 SETTINGS_INIT = {
     "wheel_source": 0,
-    "wheel_version": None,
-    "path_to_wheel": None,
-    "path_to_folder": None,
+    "wheel_version": "",
+    "path_to_wheel": "",
+    "path_to_folder": "",
     "reinstall_upon_reloading": False,
 }
 
 
 def get_settings_file_path():
     """Path to settings file."""
-    settings_folder = utils.get_user_dir(SETTINGS_SUBFOLDER)
+    settings_folder = pathlib.Path(
+        bpy.utils.user_resource("CONFIG", path="BlendLuxCore", create=True)
+    )
     settings_file =  settings_folder / SETTINGS_FILENAME
     return settings_file
 

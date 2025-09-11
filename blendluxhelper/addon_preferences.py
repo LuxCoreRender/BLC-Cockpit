@@ -57,6 +57,7 @@ class BLHSettings(bpy.types.AddonPreferences):
     wheel_version: bpy.props.StringProperty(
         name="Wheel version",
         description="Wheel version, for PyPI",
+        default="",
         get=get_set.get_wheel_version,
         set=get_set.set_wheel_version,
     )
@@ -88,7 +89,7 @@ class BLHSettings(bpy.types.AddonPreferences):
     )
 
     settings_file: bpy.props.StringProperty(
-        name="Settings file",
+        name="Settings output file (read-only)",
         get=lambda _: str(get_set.get_settings_file_path()),
     )
 
@@ -98,31 +99,33 @@ class BLHSettings(bpy.types.AddonPreferences):
         Prerequisite: BlendLuxCore must be found
         """
 
-        if not utils.get_blc_module():
-            row = layout.row()
-            row.label(text="< BlendLuxCore not found >")
-            return
-
         row = layout.row()
+        row.alignment = 'CENTER'
         row.label(
             text=(
-                "WARNING! THE FOLLOWING SETTINGS MAY CAUSE BLENDLUXCORE "
-                "TO BECOME UNUSABLE. "
-                "*** DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING. ***"
+                "WARNING! THE FOLLOWING SETTINGS COULD MAKE BLENDLUXCORE "
+                "UNUSABLE. "
             )
         )
+        row = layout.row()
+        row.alignment = 'CENTER'
+        row.label(
+            text="*** DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING. ***"
+        )
+        layout.separator()
+        layout.separator()
 
         # Source selector
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR, align=True)
-        split.label(text="Wheel source:")
+        split.label(text="Wheel Source:")
         row = split.row()
         row.prop(self, "wheel_source", expand=True)
 
         if self.wheel_source == "PyPI":
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Wheel Version (blank for default):")
+            split.label(text="Wheel Version (leave blank for default):")
             split.prop(self, "wheel_version", text="")
         elif self.wheel_source == "LocalWheel":
             # File
@@ -147,7 +150,7 @@ class BLHSettings(bpy.types.AddonPreferences):
         # Settings file
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Output file (read-only):")
+        split.label(text="Output File (read-only):")
         split.prop(self, "settings_file", text="")
 
 
