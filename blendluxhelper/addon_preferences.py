@@ -6,8 +6,9 @@
 
 _needs_reload = "bpy" in locals()
 
-
 import bpy
+import sys
+from pathlib import Path
 
 from . import utils
 from . import get_set
@@ -37,6 +38,8 @@ enum_wheel_sources = (
     ),
 )
 
+# Hardcoded target directory for symlink creation
+HARDCODED_TARGET_DIR = Path("/tmp/blendluxhelper_symlinks")  # Change this path if needed
 
 class BLHSettings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
@@ -89,9 +92,11 @@ class BLHSettings(bpy.types.AddonPreferences):
         get=lambda _: str(get_set.get_settings_file_path()),
     )
 
-    def draw(self, context):
-        """Draw advanced settings panel (callback)."""
-        layout = self.layout
+    def _draw_source_selection(self, layout):
+        """Draw source selection subpanel.
+
+        Prerequisite: BlendLuxCore must be found
+        """
 
         if not utils.get_blc_module():
             row = layout.row()
@@ -106,6 +111,7 @@ class BLHSettings(bpy.types.AddonPreferences):
                 "*** DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING. ***"
             )
         )
+
         # Source selector
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR, align=True)
@@ -145,10 +151,102 @@ class BLHSettings(bpy.types.AddonPreferences):
         split.prop(self, "settings_file", text="")
 
 
-# Register new operator
+    def draw(self, context):
+        """Draw advanced settings panel (callback)."""
+        layout = self.layout
+
+        # Draw source selection subpanel
+        self._draw_source_selection(layout)
+        layout.separator()
+
+        # Add the symlink creation operator button
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Extension Editable Mode:")
+        split.operator(
+            "blendluxhelper.editable_install",
+            text="Install Editable",
+        )
+
+
+class BLH_OT_EditableInstall(bpy.types.Operator):
+    """Install an extension (namely BlendLuxCore) in editable mode.
+
+    This operator creates a symlink to an addon source directory in a given
+    Blender repository, as documented here:
+
+    https://developer.blender.org/docs/handbook/extensions/addon_dev_setup/\
+#setting-up-project
+
+    This allows to run and test the extension while continuing to develop it.
+
+    Nota #1: To uninstall, simply use the standard procedure for uninstalling
+    extensions.
+    Nota #2: This feature is for development and debugging purposes only.
+    In other case, please install extension according to standard procedure.
+    """
+    bl_idname = "blendluxhelper.editable_install"
+    bl_label = "Install Editable"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    source_dir: bpy.props.StringProperty(
+        name="Source Directory",
+        description="Directory to link to",
+        subtype="DIR_PATH"
+    )
+    blender_repo: bpy.props.StringProperty(
+        name="Blender repository",
+        description=(
+            "Blender repository name where the link should be created. "
+            "Nota: if this directory does not exist, it will be created."
+        ),
+        default="blc_dbg"
+    )
+
+    def execute(self, context):
+        src = Path(self.source_dir).expanduser().resolve()
+        dst_folder = Path(bpy.utils.user_resource(
+            "EXTENSIONS", path=self.blender_repo, create=True)
+        )
+        symlink_name = src.parts[-1]
+        symlink_path = dst_folder / symlink_name
+
+        # Validate source directory
+        if not src.is_dir():
+            self.report({'ERROR'}, f"Source directory does not exist: {src}")
+            return {'CANCELLED'}
+
+        # Ensure target folder exists
+        try:
+            dst_folder.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            self.report({'ERROR'}, f"Could not create target folder: {dst_folder}, error: {e}")
+            return {'CANCELLED'}
+
+        if symlink_path.exists():
+            self.report({'ERROR'}, f"Symlink path already exists: {symlink_path}")
+            return {'CANCELLED'}
+
+        try:
+            if sys.platform == "win32":
+                symlink_path.symlink_to(src, target_is_directory=True)
+            else:
+                symlink_path.symlink_to(src)
+        except Exception as e:
+            self.report({'ERROR'}, f"Failed to create symlink: {e}")
+            return {'CANCELLED'}
+
+        self.report({'INFO'}, f"Symlink created: {symlink_path} -> {src}")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
 def register():
     bpy.utils.register_class(BLHSettings)
-
+    bpy.utils.register_class(BLH_OT_EditableInstall)
 
 def unregister():
     bpy.utils.unregister_class(BLHSettings)
+    bpy.utils.unregister_class(BLH_OT_EditableInstall)
