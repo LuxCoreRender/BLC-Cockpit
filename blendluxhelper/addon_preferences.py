@@ -171,6 +171,17 @@ class BLHSettings(bpy.types.AddonPreferences):
             text="Install Editable",
         )
 
+        layout.separator()
+        # Add the reload BlendLuxCore operator button
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Reload Scripts:")
+        split.operator(
+            "blendluxhelper.reload_scripts",
+            text="Reload",
+            icon='FILE_REFRESH'
+        )
+
 
 class BLH_OT_EditableInstall(bpy.types.Operator):
     """Install an extension (namely BlendLuxCore) in editable mode.
@@ -246,10 +257,46 @@ class BLH_OT_EditableInstall(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
+class BLH_OT_ReloadScripts(bpy.types.Operator):
+    """Reload all scripts."""
+    bl_idname = "blendluxhelper.reload_scripts"
+    bl_label = "Reload Scripts"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        # Attempt to reload the BlendLuxCore addon (must be installed)
+        try:
+            bpy.ops.script.reload()
+            self.report({'INFO'}, "Scripts reloaded.")
+        except Exception as e:
+            self.report({'ERROR'}, f"Failed to reload scripts: {e}")
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+# Add to 3D View > Sidebar (N-panel) under a custom tab
+class BLH_PT_Toolbar(bpy.types.Panel):
+    bl_label = "BlendLuxHelper"
+    bl_idname = "BLH_PT_toolbar"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "BlendLuxHelper"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator(
+            "blendluxhelper.reload_scripts",
+            text="Reload Scripts",
+            icon='FILE_REFRESH'
+        )
+
 def register():
     bpy.utils.register_class(BLHSettings)
     bpy.utils.register_class(BLH_OT_EditableInstall)
+    bpy.utils.register_class(BLH_OT_ReloadScripts)
+    bpy.utils.register_class(BLH_PT_Toolbar)
 
 def unregister():
     bpy.utils.unregister_class(BLHSettings)
     bpy.utils.unregister_class(BLH_OT_EditableInstall)
+    bpy.utils.unregister_class(BLH_OT_ReloadScripts)
+    bpy.utils.unregister_class(BLH_PT_Toolbar)
