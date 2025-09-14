@@ -28,9 +28,11 @@ SETTINGS_INIT = {
     "wheel_source": 0,
     "wheel_version": "",
     "path_to_wheel": "",
+    "path_to_wheel_deps": "",
     "path_to_folder": "",
     "reinstall_upon_reloading": False,
     "no_deps": False,
+    "no_index": False,
 }
 
 
@@ -144,3 +146,23 @@ def get_no_deps(_):
 def set_no_deps(_, value):
     """Setter for 'no deps' preference."""
     _set("no_deps", value)
+
+
+def get_no_index(_):
+    """Getter for 'no index' preference."""
+    return _get("no_index")
+
+
+def set_no_index(_, value):
+    """Setter for 'no index' preference."""
+    _set("no_index", value)
+
+
+def get_path_to_wheel_deps(_):
+    """Getter for 'path to wheel deps' preference."""
+    return _get("path_to_wheel_deps")
+
+
+def set_path_to_wheel_deps(_, value):
+    """Setter for 'path to wheel deps' preference."""
+    _set("path_to_wheel_deps", value)

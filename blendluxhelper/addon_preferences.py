@@ -38,8 +38,6 @@ enum_wheel_sources = (
     ),
 )
 
-# Hardcoded target directory for symlink creation
-HARDCODED_TARGET_DIR = Path("/tmp/blendluxhelper_symlinks")  # Change this path if needed
 
 class BLHSettings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
@@ -70,6 +68,14 @@ class BLHSettings(bpy.types.AddonPreferences):
         set=get_set.set_path_to_wheel,
     )
 
+    path_to_wheel_deps: bpy.props.StringProperty(
+        name="Path to Additional Dependency Folder (optional)",
+        description="Path to Additional Wheel Dependency Folder",
+        subtype="DIR_PATH",
+        get=get_set.get_path_to_wheel_deps,
+        set=get_set.set_path_to_wheel_deps,
+    )
+
     path_to_folder: bpy.props.StringProperty(
         name="Path to Folder",
         description=(
@@ -89,10 +95,20 @@ class BLHSettings(bpy.types.AddonPreferences):
     )
 
     no_deps: bpy.props.BoolProperty(
-        name="No Dependencies",
-        description="Do not load wheel dependencies",
+        name="No Remote Dependencies",
+        description=(
+            "Do not load wheel dependencies from remote. "
+            "Nota: you will have to provide them in local."
+        ),
         get=get_set.get_no_deps,
         set=get_set.set_no_deps,
+    )
+
+    no_index: bpy.props.BoolProperty(
+        name="No Index",
+        description="Ignore package index",
+        get=get_set.get_no_index,
+        set=get_set.set_no_index,
     )
 
     settings_file: bpy.props.StringProperty(
@@ -146,6 +162,12 @@ class BLHSettings(bpy.types.AddonPreferences):
             split = row.split(factor=SPLIT_FACTOR)
             split.label(text="Path to File")
             split.prop(self, "path_to_wheel", text="")
+
+            row = layout.row()
+            split = row.split(factor=SPLIT_FACTOR)
+            split.label(text="Path to Additional Deps Folder (optional)")
+            split.prop(self, "path_to_wheel_deps", text="")
+
         elif self.wheel_source == "LocalFolder":
             # Folder
             row = layout.row()
@@ -164,6 +186,11 @@ class BLHSettings(bpy.types.AddonPreferences):
         split = row.split(factor=SPLIT_FACTOR)
         split.label(text="Dependency Policy")
         split.prop(self, "no_deps")
+
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Index Policy")
+        split.prop(self, "no_index")
 
         # Settings file
         row = layout.row()
