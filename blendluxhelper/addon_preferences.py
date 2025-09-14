@@ -82,7 +82,7 @@ class BLHSettings(bpy.types.AddonPreferences):
     )
 
     reinstall_upon_reloading: bpy.props.BoolProperty(
-        name="Reinstall upon reloading",
+        name="Reinstall upon each reloading",
         description="Reinstall every time BlendLuxCore is reloaded",
         get=get_set.get_reinstall_upon_reloading,
         set=get_set.set_reinstall_upon_reloading,
