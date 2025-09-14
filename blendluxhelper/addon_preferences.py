@@ -165,6 +165,14 @@ class BLHSettings(bpy.types.AddonPreferences):
         split.label(text="Dependency Policy")
         split.prop(self, "no_deps")
 
+        # Settings file
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Output File")
+        split.prop(self, "settings_file", text="", emboss=False)
+
+        layout.separator()
+
         # Add 'reload scripts' operator button
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
@@ -174,13 +182,6 @@ class BLHSettings(bpy.types.AddonPreferences):
             text="Reload Scripts",
             icon='FILE_REFRESH'
         )
-
-        # Settings file
-        layout.separator()
-        row = layout.row()
-        split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Output File")
-        split.prop(self, "settings_file", text="", emboss=False)
 
     def _draw_editable_mode(self, layout):
         """Draw editable mode settings subpanel."""
