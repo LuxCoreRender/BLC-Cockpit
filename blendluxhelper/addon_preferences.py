@@ -82,10 +82,17 @@ class BLHSettings(bpy.types.AddonPreferences):
     )
 
     reinstall_upon_reloading: bpy.props.BoolProperty(
-        name="Reinstall upon each reloading",
+        name="Reinstall upon each Reloading",
         description="Reinstall every time BlendLuxCore is reloaded",
         get=get_set.get_reinstall_upon_reloading,
         set=get_set.set_reinstall_upon_reloading,
+    )
+
+    no_deps: bpy.props.BoolProperty(
+        name="No Dependencies",
+        description="Do not load wheel dependencies",
+        get=get_set.get_no_deps,
+        set=get_set.set_no_deps,
     )
 
     settings_file: bpy.props.StringProperty(
@@ -153,10 +160,15 @@ class BLHSettings(bpy.types.AddonPreferences):
         split.label(text="Reloading Policy")
         split.prop(self, "reinstall_upon_reloading")
 
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Dependency Policy")
+        split.prop(self, "no_deps")
+
         # Add 'reload scripts' operator button
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Reload Scripts")
+        split.label(text="Scripts Reloading")
         split.operator(
             "blendluxhelper.reload_scripts",
             text="Reload Scripts",
@@ -183,10 +195,10 @@ class BLHSettings(bpy.types.AddonPreferences):
         # Add the symlink creation operator button
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Install Extension in Editable Mode:")
+        split.label(text="Editable Installation")
         split.operator(
             "blendluxhelper.editable_install",
-            text="Install in Editable Mode",
+            text="Install Extension in Editable Mode",
         )
 
 

@@ -30,6 +30,7 @@ SETTINGS_INIT = {
     "path_to_wheel": "",
     "path_to_folder": "",
     "reinstall_upon_reloading": False,
+    "no_deps": False,
 }
 
 
@@ -133,3 +134,13 @@ def get_reinstall_upon_reloading(_):
 def set_reinstall_upon_reloading(_, value):
     """Setter for 'reinstall upon reloading' preference."""
     _set("reinstall_upon_reloading", value)
+
+
+def get_no_deps(_):
+    """Getter for 'no deps' preference."""
+    return _get("no_deps")
+
+
+def set_no_deps(_, value):
+    """Setter for 'no deps' preference."""
+    _set("no_deps", value)
