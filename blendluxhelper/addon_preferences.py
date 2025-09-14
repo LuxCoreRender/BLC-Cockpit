@@ -93,12 +93,8 @@ class BLHSettings(bpy.types.AddonPreferences):
         get=lambda _: str(get_set.get_settings_file_path()),
     )
 
-    def _draw_source_selection(self, layout):
-        """Draw source selection subpanel.
-
-        Prerequisite: BlendLuxCore must be found
-        """
-
+    def _draw_warning(self, layout):
+        """Draw warning message."""
         row = layout.row()
         row.alignment = 'CENTER'
         row.label(
@@ -115,72 +111,99 @@ class BLHSettings(bpy.types.AddonPreferences):
         layout.separator()
         layout.separator()
 
+    def _draw_source_selection(self, layout):
+        """Draw source selection subpanel."""
+        header, layout = layout.panel("blendluxhelper.wheel_panel")
+
+        header.label(text="Wheels")
+
+        # If panel is closed, return
+        if not layout:
+            return
+
         # Source selector
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR, align=True)
-        split.label(text="Wheel Source:")
+        split.label(text="Wheel Source")
         row = split.row()
         row.prop(self, "wheel_source", expand=True)
 
         if self.wheel_source == "PyPI":
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Wheel Version (leave blank for default):")
+            split.label(text="Wheel Version (leave blank for default)")
             split.prop(self, "wheel_version", text="")
         elif self.wheel_source == "LocalWheel":
             # File
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Path to File:")
+            split.label(text="Path to File")
             split.prop(self, "path_to_wheel", text="")
         elif self.wheel_source == "LocalFolder":
             # Folder
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Path to Folder:")
+            split.label(text="Path to Folder")
             split.prop(self, "path_to_folder", text="")
         else:
             raise RuntimeError(f"Unhandled wheel source: {self.wheel_source}")
 
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Reloading:")
+        split.label(text="Reloading Policy")
         split.prop(self, "reinstall_upon_reloading")
 
-        # Settings file
+        # Add 'reload scripts' operator button
         row = layout.row()
         split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Output File (read-only):")
-        split.prop(self, "settings_file", text="")
+        split.label(text="Reload Scripts")
+        split.operator(
+            "blendluxhelper.reload_scripts",
+            text="Reload Scripts",
+            icon='FILE_REFRESH'
+        )
+
+        # Settings file
+        layout.separator()
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Output File")
+        split.prop(self, "settings_file", text="", emboss=False)
+
+    def _draw_editable_mode(self, layout):
+        """Draw editable mode settings subpanel."""
+        header, layout = layout.panel("blendluxhelper.editable_panel")
+
+        header.label(text="Editable Mode")
+
+        # If panel is closed, return
+        if not layout:
+            return
+
+        # Add the symlink creation operator button
+        row = layout.row()
+        split = row.split(factor=SPLIT_FACTOR)
+        split.label(text="Install Extension in Editable Mode:")
+        split.operator(
+            "blendluxhelper.editable_install",
+            text="Install in Editable Mode",
+        )
 
 
     def draw(self, context):
         """Draw advanced settings panel (callback)."""
         layout = self.layout
 
+        # Warn user about the potential settings impacts
+        self._draw_warning(layout)
+
         # Draw source selection subpanel
         self._draw_source_selection(layout)
         layout.separator()
 
-        # Add the symlink creation operator button
-        row = layout.row()
-        split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Extension Editable Mode:")
-        split.operator(
-            "blendluxhelper.editable_install",
-            text="Install Editable",
-        )
+        # Draw editable mode subpanel
+        self._draw_editable_mode(layout)
 
-        layout.separator()
-        # Add the reload BlendLuxCore operator button
-        row = layout.row()
-        split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Reload Scripts:")
-        split.operator(
-            "blendluxhelper.reload_scripts",
-            text="Reload",
-            icon='FILE_REFRESH'
-        )
 
 
 class BLH_OT_EditableInstall(bpy.types.Operator):
