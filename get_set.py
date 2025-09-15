@@ -41,7 +41,7 @@ def get_settings_file_path():
     settings_folder = pathlib.Path(
         bpy.utils.user_resource("CONFIG", path="BlendLuxCore", create=True)
     )
-    settings_file =  settings_folder / SETTINGS_FILENAME
+    settings_file = settings_folder / SETTINGS_FILENAME
     return settings_file
 
 

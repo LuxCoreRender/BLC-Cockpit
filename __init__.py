@@ -14,18 +14,18 @@ _needs_reload = "bpy" in locals()
 
 import bpy
 
-from . import blendluxhelper
+from . import addon_preferences
 
 if _needs_reload:
     import importlib
 
-    blendluxhelper = importlib.reload(blendluxhelper)
-    print(f"Reloading: {blendluxhelper}")
+    addon_preferences = importlib.reload(addon_preferences)
+    print(f"Reloading: {__package__}")
 
 
 def register():
-    blendluxhelper.register()
+    addon_preferences.register()
 
 
 def unregister():
-    blendluxhelper.unregister()
+    addon_preferences.unregister()

@@ -44,6 +44,7 @@ def get_user_dir(name):
         )
     )
 
+
 def trim_docstring(docstring):
     """Trim docstring.
 
@@ -51,7 +52,7 @@ def trim_docstring(docstring):
     """
 
     if not docstring:
-        return ''
+        return ""
     # Convert tabs to spaces (following the normal Python rules)
     # and split into a list of lines:
     lines = docstring.expandtabs().splitlines()
@@ -72,4 +73,4 @@ def trim_docstring(docstring):
     while trimmed and not trimmed[0]:
         trimmed.pop(0)
     # Return a single string:
-    return '\n'.join(trimmed)
+    return "\n".join(trimmed)

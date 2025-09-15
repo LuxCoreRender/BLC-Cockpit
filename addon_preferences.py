@@ -39,10 +39,13 @@ enum_wheel_sources = (
 )
 
 
+print(f"[BLH] Declaring Addon Preferences with bl_idname='{__package__}'")
+
+
 class BLHSettings(bpy.types.AddonPreferences):
     """Addon preferences panel."""
 
-    bl_idname = utils.get_bl_idname()
+    bl_idname = __package__
 
     wheel_source: bpy.props.EnumProperty(
         name="Source",
@@ -119,7 +122,7 @@ class BLHSettings(bpy.types.AddonPreferences):
     def _draw_warning(self, layout):
         """Draw warning message."""
         row = layout.row()
-        row.alignment = 'CENTER'
+        row.alignment = "CENTER"
         row.label(
             text=(
                 "WARNING! THE FOLLOWING SETTINGS COULD MAKE BLENDLUXCORE "
@@ -127,7 +130,7 @@ class BLHSettings(bpy.types.AddonPreferences):
             )
         )
         row = layout.row()
-        row.alignment = 'CENTER'
+        row.alignment = "CENTER"
         row.label(
             text="*** DO NOT MODIFY UNLESS YOU KNOW WHAT YOU ARE DOING. ***"
         )
@@ -207,7 +210,7 @@ class BLHSettings(bpy.types.AddonPreferences):
         split.operator(
             "blendluxhelper.reload_scripts",
             text="Reload Scripts",
-            icon='FILE_REFRESH'
+            icon="FILE_REFRESH",
         )
 
     def _draw_editable_mode(self, layout):
@@ -229,7 +232,6 @@ class BLHSettings(bpy.types.AddonPreferences):
             text="Install Extension in Editable Mode",
         )
 
-
     def draw(self, context):
         """Draw advanced settings panel (callback)."""
         layout = self.layout
@@ -243,7 +245,6 @@ class BLHSettings(bpy.types.AddonPreferences):
 
         # Draw editable mode subpanel
         self._draw_editable_mode(layout)
-
 
 
 class BLH_OT_EditableInstall(bpy.types.Operator):
@@ -262,14 +263,15 @@ class BLH_OT_EditableInstall(bpy.types.Operator):
     Nota #2: This feature is for development and debugging purposes only.
     In other case, please install extension according to standard procedure.
     """
+
     bl_idname = "blendluxhelper.editable_install"
     bl_label = "Install Editable"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     source_dir: bpy.props.StringProperty(
         name="Source Directory",
         description="Directory to link to",
-        subtype="DIR_PATH"
+        subtype="DIR_PATH",
     )
     blender_repo: bpy.props.StringProperty(
         name="Blender repository",
@@ -277,32 +279,39 @@ class BLH_OT_EditableInstall(bpy.types.Operator):
             "Blender repository name where the link should be created. "
             "Nota: if this directory does not exist, it will be created."
         ),
-        default="blc_dbg"
+        default="blc_dbg",
     )
 
     def execute(self, context):
         src = Path(self.source_dir).expanduser().resolve()
-        dst_folder = Path(bpy.utils.user_resource(
-            "EXTENSIONS", path=self.blender_repo, create=True)
+        dst_folder = Path(
+            bpy.utils.user_resource(
+                "EXTENSIONS", path=self.blender_repo, create=True
+            )
         )
         symlink_name = src.parts[-1]
         symlink_path = dst_folder / symlink_name
 
         # Validate source directory
         if not src.is_dir():
-            self.report({'ERROR'}, f"Source directory does not exist: {src}")
-            return {'CANCELLED'}
+            self.report({"ERROR"}, f"Source directory does not exist: {src}")
+            return {"CANCELLED"}
 
         # Ensure target folder exists
         try:
             dst_folder.mkdir(parents=True, exist_ok=True)
         except Exception as e:
-            self.report({'ERROR'}, f"Could not create target folder: {dst_folder}, error: {e}")
-            return {'CANCELLED'}
+            self.report(
+                {"ERROR"},
+                f"Could not create target folder: {dst_folder}, error: {e}",
+            )
+            return {"CANCELLED"}
 
         if symlink_path.exists():
-            self.report({'ERROR'}, f"Symlink path already exists: {symlink_path}")
-            return {'CANCELLED'}
+            self.report(
+                {"ERROR"}, f"Symlink path already exists: {symlink_path}"
+            )
+            return {"CANCELLED"}
 
         try:
             if sys.platform == "win32":
@@ -310,38 +319,41 @@ class BLH_OT_EditableInstall(bpy.types.Operator):
             else:
                 symlink_path.symlink_to(src)
         except Exception as e:
-            self.report({'ERROR'}, f"Failed to create symlink: {e}")
-            return {'CANCELLED'}
+            self.report({"ERROR"}, f"Failed to create symlink: {e}")
+            return {"CANCELLED"}
 
-        self.report({'INFO'}, f"Symlink created: {symlink_path} -> {src}")
-        return {'FINISHED'}
+        self.report({"INFO"}, f"Symlink created: {symlink_path} -> {src}")
+        return {"FINISHED"}
 
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
+
 class BLH_OT_ReloadScripts(bpy.types.Operator):
     """Reload all scripts."""
+
     bl_idname = "blendluxhelper.reload_scripts"
     bl_label = "Reload Scripts"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         # Attempt to reload the BlendLuxCore addon (must be installed)
         try:
             bpy.ops.script.reload()
-            self.report({'INFO'}, "Scripts reloaded.")
+            self.report({"INFO"}, "Scripts reloaded.")
         except Exception as e:
-            self.report({'ERROR'}, f"Failed to reload scripts: {e}")
-            return {'CANCELLED'}
-        return {'FINISHED'}
+            self.report({"ERROR"}, f"Failed to reload scripts: {e}")
+            return {"CANCELLED"}
+        return {"FINISHED"}
+
 
 # Add to 3D View > Sidebar (N-panel) under a custom tab
 class BLH_PT_Toolbar(bpy.types.Panel):
     bl_label = "BlendLuxHelper"
     bl_idname = "BLH_PT_toolbar"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
     bl_category = "BlendLuxHelper"
 
     def draw(self, context):
@@ -349,17 +361,19 @@ class BLH_PT_Toolbar(bpy.types.Panel):
         layout.operator(
             "blendluxhelper.reload_scripts",
             text="Reload Scripts",
-            icon='FILE_REFRESH'
+            icon="FILE_REFRESH",
         )
 
+
 def register():
-    bpy.utils.register_class(BLHSettings)
     bpy.utils.register_class(BLH_OT_EditableInstall)
     bpy.utils.register_class(BLH_OT_ReloadScripts)
     bpy.utils.register_class(BLH_PT_Toolbar)
+    bpy.utils.register_class(BLHSettings)
+
 
 def unregister():
-    bpy.utils.unregister_class(BLHSettings)
     bpy.utils.unregister_class(BLH_OT_EditableInstall)
     bpy.utils.unregister_class(BLH_OT_ReloadScripts)
     bpy.utils.unregister_class(BLH_PT_Toolbar)
+    bpy.utils.unregister_class(BLHSettings)
