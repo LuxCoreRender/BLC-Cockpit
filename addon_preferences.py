@@ -57,7 +57,13 @@ class BLHSettings(bpy.types.AddonPreferences):
 
     wheel_version: bpy.props.StringProperty(
         name="Wheel version",
-        description="Wheel version, for PyPI",
+        description=(
+            "Wheel version, for PyPI.\n"
+            "This uses exact matching, with trailing * allowed, as documented here: "
+            "https://packaging.python.org/en/latest/specifications"
+            "/version-specifiers/#version-matching.\n"
+            "Example: 2.10.1"
+        ),
         default="",
         get=get_set.get_wheel_version,
         set=get_set.set_wheel_version,
@@ -109,7 +115,11 @@ class BLHSettings(bpy.types.AddonPreferences):
 
     no_index: bpy.props.BoolProperty(
         name="No Index",
-        description="Ignore package index",
+        description=(
+            "Ignore package index.\n"
+            "This handles --no-index flag of pip download. See documentation here: "
+            "https://pip.pypa.io/en/stable/cli/pip_download/#cmdoption-no-index"
+        ),
         get=get_set.get_no_index,
         set=get_set.set_no_index,
     )
