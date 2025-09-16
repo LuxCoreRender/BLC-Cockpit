@@ -29,13 +29,6 @@ enum_wheel_sources = (
         "Get PyLuxCore from a local wheel file, not including dependencies",
         1,
     ),
-    (
-        "LocalFolder",
-        "Local Wheel + dependencies",
-        "Get PyLuxCore from a local folder, containing PyLuxCore wheel "
-        "and all its dependencies",
-        2,
-    ),
 )
 
 
@@ -83,17 +76,6 @@ class BLHSettings(bpy.types.AddonPreferences):
         subtype="DIR_PATH",
         get=get_set.get_path_to_wheel_deps,
         set=get_set.set_path_to_wheel_deps,
-    )
-
-    path_to_folder: bpy.props.StringProperty(
-        name="Path to Folder",
-        description=(
-            "Path to Folder containing PyLuxCore Wheel + the other "
-            "dependencies"
-        ),
-        subtype="DIR_PATH",
-        get=get_set.get_path_to_folder,
-        set=get_set.set_path_to_folder,
     )
 
     reinstall_upon_reloading: bpy.props.BoolProperty(
@@ -173,20 +155,24 @@ class BLHSettings(bpy.types.AddonPreferences):
             # File
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Path to File")
+            split.label(text="Path to Wheel File")
             split.prop(self, "path_to_wheel", text="")
 
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Path to Additional Deps Folder (optional)")
+            split.label(text="Path to Additional Wheels Folder (optional)")
             split.prop(self, "path_to_wheel_deps", text="")
 
-        elif self.wheel_source == "LocalFolder":
-            # Folder
             row = layout.row()
             split = row.split(factor=SPLIT_FACTOR)
-            split.label(text="Path to Folder")
-            split.prop(self, "path_to_folder", text="")
+            split.label(text="Dependency Policy")
+            split.prop(self, "no_deps")
+
+            row = layout.row()
+            split = row.split(factor=SPLIT_FACTOR)
+            split.label(text="Index Policy")
+            split.prop(self, "no_index")
+
         else:
             raise RuntimeError(f"Unhandled wheel source: {self.wheel_source}")
 
@@ -194,16 +180,6 @@ class BLHSettings(bpy.types.AddonPreferences):
         split = row.split(factor=SPLIT_FACTOR)
         split.label(text="Reloading Policy")
         split.prop(self, "reinstall_upon_reloading")
-
-        row = layout.row()
-        split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Dependency Policy")
-        split.prop(self, "no_deps")
-
-        row = layout.row()
-        split = row.split(factor=SPLIT_FACTOR)
-        split.label(text="Index Policy")
-        split.prop(self, "no_index")
 
         # Settings file
         row = layout.row()
@@ -240,6 +216,7 @@ class BLHSettings(bpy.types.AddonPreferences):
         split.operator(
             "blendluxhelper.editable_install",
             text="Install Extension in Editable Mode",
+            icon="GREASEPENCIL",
         )
 
     def draw(self, context):
